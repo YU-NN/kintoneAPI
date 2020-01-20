@@ -24,7 +24,7 @@
 
 
 
-          var str = "店舗ID = 30";
+          var str = "店舗ID = "+ store_records[0]["id"]["value"];
 
           var nippou_body = {
             "app": 83,
