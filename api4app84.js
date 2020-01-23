@@ -49,25 +49,27 @@
               //登録するデータのJSON
               var new_records_body = {
                   "app": 84,
-                  "records": [
-                    {
-                      "店舗名": {
-                          "value": store_records[0]["name"]["value"]
-                      },
-                      "今月問い合わせ数": {
-                          "value": lead_sum
-                      },
-                      "先月問い合わせ数": {
-                          "value": 123
-                      },
-                      "成約数合計": {
-                          "value": saled_car_sum
-                      }
-                  }
-                ]
+                  "records": []
               };
-              //登録
-              kintone.api(kintone.api.url('/k/v1/records', true), 'POST', new_records_body, function(resp) {}, function(error) {});
+
+              var new_record = {
+                "店舗名": {
+                    "value": store_records[0]["name"]["value"]
+                },
+                "今月問い合わせ数": {
+                    "value": lead_sum
+                },
+                "先月問い合わせ数": {
+                    "value": 123
+                },
+                "成約数合計": {
+                    "value": saled_car_sum
+                }
+            };
+            new_records_body["records"].push(new_record);
+
+            //登録
+            kintone.api(kintone.api.url('/k/v1/records', true), 'POST', new_records_body, function(resp) {}, function(error) {});
 
 
 
