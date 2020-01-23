@@ -1,3 +1,10 @@
+var new_record = {};
+var new_records_body = {
+    "app": 84,
+    "records": []
+};
+
+
 (function() {
     "use strict";
 
@@ -47,12 +54,9 @@
 
               //その店舗のレコードを登録する部分
               //登録するデータのJSON
-              var new_records_body = {
-                  "app": 84,
-                  "records": []
-              };
 
-              var new_record = {
+
+              new_record = {
                 "店舗名": {
                     "value": store_records[0]["name"]["value"]
                 },
