@@ -20,7 +20,7 @@
           //日報アプリから、特定の店舗の"店舗ID","リード合計","来店数","販売台数”を取得するJSON
           var nippou_body = {
             "app": 83,
-            "fields": ["店舗ID","リード合計","来店数","販売台数"],
+            "fields": ["店舗ID","店舗名","リード合計","来店数","販売台数"],
             "query": nippou_query
           };
 
@@ -30,7 +30,7 @@
           kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body, function(nippou_resp) {
               // success
               nippou_records = nippou_resp["records"];
-              alert(nippou_records[0]["店舗ID"]["value"]);
+              alert(nippou_records[0]["店舗ID"]["value"] +":"+ nippou_records[0]["店舗名"]["value"] +"のリード合計："+ nippou_records[0]["リード合計"]["value"]);
           }, function(error) {
               // error
               alert("error");
