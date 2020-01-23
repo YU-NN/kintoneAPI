@@ -42,8 +42,38 @@
                 lead_sum      += Number(nippou_records[i]["リード合計"]["value"]);
                 guest_sum     += Number(nippou_records[i]["来店数"]["value"]);
                 saled_car_sum += Number(nippou_records[i]["販売台数"]["value"]);
-                alert(nippou_records[i]["店舗ID"]["value"] +":"+ nippou_records[i]["店舗名"]["value"] +"のリード合計："+ nippou_records[i]["リード合計"]["value"]);
+                //alert(nippou_records[i]["店舗ID"]["value"] +":"+ nippou_records[i]["店舗名"]["value"] +"のリード合計："+ nippou_records[i]["リード合計"]["value"]);
               }
+
+              //その店舗のレコードを登録する部分
+              //登録するデータのJSON
+              var new_record_body = {
+                  "app": 84,
+                  "record": {
+                      "店舗名": {
+                          "value": store_records[0]["name"]["value"]
+                      },
+                      "今月問い合わせ数": {
+                          "value": lead_sum
+                      },
+                      "先月問い合わせ数": {
+                          "value": 0
+                      },
+                      "成約数合計": {
+                          "value": saled_car_sum
+                      }
+                  }
+              };
+              //登録
+              kintone.api(kintone.api.url('/k/v1/record', true), 'POST', new_record_body, function(resp) {
+                  alert(resp);
+              }, function(error) {
+                  // error
+                  console.log(error);
+              });
+
+
+
 
           }, function(error) {
               // error
