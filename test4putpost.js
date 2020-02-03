@@ -68,8 +68,12 @@ var store_data = {};
 
     //ここで同期処理を行う。
     var handler = function(event) {
-      return kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get).then(function(get_nippou_resp){
 
+      return kintone.api(kintone.api.url('/k/v1/records', true), 'GET', store_body).then(function(get_store_resp){
+        store_data = get_store_resp["records"];
+        return kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get);
+      }).then(function(get_nippou_resp){
+        //処理
         for (var i = 0; i < get_nippou_resp["records"].length; i++) {
           if (get_nippou_resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02" && get_nippou_resp["records"][i]["店舗名"]["value"] == "杉並") {
             boolIsAlreadyExist = true;
