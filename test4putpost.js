@@ -1,3 +1,10 @@
+//現在の西暦と月を取得する。
+var now   = new Date();
+var year  = now.getFullYear();
+var month = now.getMonth()+1;
+
+var boolIsAlreadyExist = false;
+var storeMonthlyRecordId = 0;
 
 //ポスト用のレコード達を保存するJSON
 var records4post = {
@@ -5,10 +12,16 @@ var records4post = {
   "records": [
     {
       "西暦": {
-        "value": 2020
+        "value": year
+      },
+      "月": {
+        "value": month
       },
       "今月問い合わせ数": {
         "value": 999
+      },
+      "店舗名":{
+        "value": "杉並"
       }
     },
   ]
@@ -18,10 +31,10 @@ var records4put  = {
   "app": 84,
   "records": [
     {
-      "id": 187,
+      "id": 0,
       "record": {
         "今月問い合わせ数": {
-          "value": 4321
+          "value": 1009
         }
       }
     },
@@ -35,34 +48,35 @@ var records4get  = {
     "fields": ["レコード番号", "作成日時", "今月問い合わせ数","店舗名"]
 };
 
+
+
+
+
 (function() {
     "use strict";
-    var boolIsAlreadyExist = false;
-    var handler4get  = function(resp) {
-      for (var i = 0; i < resp["records"].length; i++) {
-        if (resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02") {
-          boolIsAlreadyExist = true;
-          break;
-        }
-      }
-    };
-    var handler4post = function(resp) {
-      if (boolIsAlreadyExist) alert("post");
-    };
-    var handler4put  = function(resp) {
-      if (boolIsAlreadyExist) alert("put");
-    };
-
 
     //ここで同期処理を行う。
     var handler = function(event) {
-      kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get , handler4get , function(error) {});
+      return kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get).then(function(get_resp){
 
-      if (boolIsAlreadyExist) {
-        kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put , handler4put , function(error) {});
-      }else {
-        kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post, handler4post, function(error) {});
-      }
+        for (var i = 0; i < get_resp["records"].length; i++) {
+          if (get_resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02" && get_resp["records"][i]["店舗名"]["value"] == "杉並") {
+            boolIsAlreadyExist = true;
+            records4put["records"][0]["id"] = Number(get_resp["records"][i]["レコード番号"]["value"]);
+            break;
+          }
+        }
+
+        if (boolIsAlreadyExist) {
+          return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put).then(function(put_resp){
+            return event;
+          });
+        } else {
+          return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post).then(function(post_resp){
+            return event;
+          });
+        }
+      });
     };
 
 
