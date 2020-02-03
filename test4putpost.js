@@ -48,6 +48,11 @@ var records4get  = {
     "fields": ["レコード番号", "作成日時", "今月問い合わせ数","店舗名"]
 };
 
+var store_body = {
+    "app": 57,
+    "fields": ["id","name"]
+};
+var store_data = {};
 
 
 
@@ -55,29 +60,48 @@ var records4get  = {
 (function() {
     "use strict";
 
+
+
+
+
+
+
     //ここで同期処理を行う。
     var handler = function(event) {
-      return kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get).then(function(get_resp){
+      return kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  records4get).then(function(get_nippou_resp){
 
-        for (var i = 0; i < get_resp["records"].length; i++) {
-          if (get_resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02" && get_resp["records"][i]["店舗名"]["value"] == "杉並") {
+        for (var i = 0; i < get_nippou_resp["records"].length; i++) {
+          if (get_nippou_resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02" && get_nippou_resp["records"][i]["店舗名"]["value"] == "杉並") {
             boolIsAlreadyExist = true;
-            records4put["records"][0]["id"] = Number(get_resp["records"][i]["レコード番号"]["value"]);
+            records4put["records"][0]["id"] = Number(get_nippou_resp["records"][i]["レコード番号"]["value"]);
             break;
           }
         }
 
         if (boolIsAlreadyExist) {
-          return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put).then(function(put_resp){
+          return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put).then(function(put_nippou_resp){
             return event;
           });
         } else {
-          return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post).then(function(post_resp){
+          return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post).then(function(post_nippou_resp){
             return event;
           });
         }
       });
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
