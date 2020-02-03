@@ -9,40 +9,36 @@ var storeMonthlyRecordId = 0;
 
 
 //ポスト用のレコード達を保存するJSON
-var record4post  = {};
+var record4post  = {
+  "西暦": {
+    "value": year
+  },
+  "月": {
+    "value": month
+  },
+  "今月問い合わせ数": {
+    "value": 999
+  },
+  "店舗名":{
+    "value": "杉並"
+  }
+};
 var records4post = {
   "app": 84,
-  "records": [
-    {
-      "西暦": {
-        "value": year
-      },
-      "月": {
-        "value": month
-      },
-      "今月問い合わせ数": {
-        "value": 999
-      },
-      "店舗名":{
-        "value": "杉並"
-      }
-    },
-  ]
+  "records": []
 };
 //プット用のレコード達を保存するJSON
-var record4put   = {};
+var record4put   = {
+  "id": 0,
+  "record": {
+    "今月問い合わせ数": {
+      "value": 1009
+    }
+  }
+};
 var records4put  = {
   "app": 84,
-  "records": [
-    {
-      "id": 0,
-      "record": {
-        "今月問い合わせ数": {
-          "value": 1009
-        }
-      }
-    },
-  ]
+  "records": []
 };
 //ゲット用のレコード達を保存するJSON
 var query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH()";
@@ -81,9 +77,17 @@ var store_data = {};
         for (var i = 0; i < get_nippou_resp["records"].length; i++) {
           if (get_nippou_resp["records"][i]["作成日時"]["value"].substr(0,7) == "2020-02" && get_nippou_resp["records"][i]["店舗名"]["value"] == "杉並") {
             boolIsAlreadyExist = true;
-            records4put["records"][0]["id"] = Number(get_nippou_resp["records"][i]["レコード番号"]["value"]);
+            record4put["id"] = Number(get_nippou_resp["records"][i]["レコード番号"]["value"]);
             break;
           }
+        }
+
+        if (boolIsAlreadyExist) {
+          //更新用のJSONにPUS
+          records4put["records"].push(record4put);
+        }else {
+          //作成用のJSONにPUSH
+          records4post["records"].push(record4post);
         }
 
 
