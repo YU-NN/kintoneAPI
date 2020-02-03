@@ -6,7 +6,10 @@ var month = now.getMonth()+1;
 var boolIsAlreadyExist = false;
 var storeMonthlyRecordId = 0;
 
+
+
 //ポスト用のレコード達を保存するJSON
+var record4post  = {};
 var records4post = {
   "app": 84,
   "records": [
@@ -27,6 +30,7 @@ var records4post = {
   ]
 };
 //プット用のレコード達を保存するJSON
+var record4put   = {};
 var records4put  = {
   "app": 84,
   "records": [
@@ -82,16 +86,20 @@ var store_data = {};
           }
         }
 
-        if (boolIsAlreadyExist) {
-          return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put).then(function(put_nippou_resp){
-            return event;
-          });
-        } else {
-          return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post).then(function(post_nippou_resp){
-            return event;
-          });
-        }
+
+
+
+        return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , records4put);
+      }).then(function(put_nippou_resp){
+        return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', records4post);
+      }).then(function(post_nippou_resp){
+        return event;
       });
+
+
+
+
+
     };
 
 
