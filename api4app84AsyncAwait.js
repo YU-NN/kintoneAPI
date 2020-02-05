@@ -1,4 +1,4 @@
-//現在の西暦と月を取得する。
+//日付関連の処理、変数準備
 var now   = new Date();
 var year  = now.getFullYear();
 var month = now.getMonth()+1;
@@ -6,18 +6,21 @@ if(month < 10) var strmonth = "0"+String(month);
 else var strmonth = String(month);
 var stryear_month = String(year)+"-"+strmonth;
 
-
+//店舗情報を取得するためのJSON
 var store_body = {
     "app": 57,
     "fields": ["id","name"]
 };
-var query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH()";
+
+//月間報告レコードを取得するためのクエリとJSON
+var monthly_records_query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH()";
 var monthly_records_body  = {
     "app": 84,
-    "query": query,
+    "query": monthly_records_query,
     "fields": ["レコード番号", "作成日時", "今月問い合わせ数","店舗名"]
 };
 
+//月間報告レコードのPUT用、POST用JSON
 var monthly_records4put  = {
   "app": 84,
   "records": []
@@ -33,14 +36,20 @@ var monthly_records4post = {
   'use strict';
   var handler = async function(event) {
 
+    //店舗情報と、月間報告レコードを取得
     var store_resp           = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', store_body);
     var monthly_records_resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET',  monthly_records_body);
 
+    //店舗情報と、月間報告レコードから中身を取得
     var store_records   = store_resp["records"];
     var monthly_records = monthly_records_resp["records"];
 
 
-    for (var i = 0; i < store_records.length; i++) {
+
+
+    for (var i = 0; i < store_records.length; i++)  {
+
+
       var monthly_record4put   = {
         "id": 159,
         "record": {
@@ -63,9 +72,11 @@ var monthly_records4post = {
           "value": ""
         }
       };
+
+      
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
-      for (var j = 0; j < monthly_records.length; j++) {
+      for (var j = 0; j < monthly_records.length; j++)  {
         //もしもすでに月間レコードがあったら、更新する処理を行う
         if (monthly_records[j]["作成日時"]["value"].substr(0,7) == stryear_month && monthly_records[j]["店舗名"]["value"] == store_records[i]["name"]["value"]) {
           boolIsAlreadyExist = true;
@@ -73,16 +84,19 @@ var monthly_records4post = {
           //更新作業
         }
       }
+
+
       //すでにあったら、更新。そうでなければ作成
       if (boolIsAlreadyExist) {
-        //更新用のJSONにPUSH
         monthly_records4put["records"].push(monthly_record4put);
       }else {
         //monthly_record4putとmonthly_record4postをiの店に合うように変更。
         monthly_record4post["店舗名"]["value"] = store_records[i]["name"]["value"];
-        //作成用のJSONにPUSH
         monthly_records4post["records"].push(monthly_record4post);
       }
+
+
+
     }
 
     alert(JSON.stringify(monthly_records4post));
