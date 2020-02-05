@@ -55,30 +55,33 @@ var monthly_records4post = {
 
     for (var i = 0; i < store_records.length; i++)  {
 
+      nippou_body["query"] = "作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
+      var lastmonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var lastmonth_nippou_records = lastmonth_nippou_resp["records"];
+
 
 
       //この店舗の今月と先月の日報を取得
-      nippou_body["query"] = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
-      var nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
-      var nippou_records = nippou_resp["records"];
-      //alert(store_records[i]["name"]["value"]+":"+JSON.stringify(nippou_records));
+      nippou_body["query"] = "作成日時 = THIS_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
+      var thismonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var thismonth_nippou_records = thismonth_nippou_resp["records"];
 
-      //ある店舗の日報達の値の和などを一時保存しておくJSON
-      var nippous4store_value = {
-        "今月問い合わせ数":0,
-        "先月問い合わせ数":0,
-        "成約数合計":0,
-        "仮契約合計":0,
-        "当月着地予想":0,
-        "目標成約台数":0,
-        "ローン付帯値":0,
-      };
-      //この店舗の日報たちの値の和とかを取る。
-      for (var j = 0; j < nippou_records.length; j++) {
-        nippous4store_value["今月問い合わせ数"] += Number(nippou_records[j]["リード合計"]["value"]);
+      var last_leadsum = 0;
+      var this_leadsum = 0;
+
+      //先月のレコードを計算
+      for (var j = 0; j < lastmonth_nippou_records.length; j++) {
+        last_leadsum += Number(lastmonth_nippou_records[j]["リード合計"]["value"]);
+      }
+      //今月のレコードを計算
+      for (var j = 0; j < thismonth_nippou_records.length; j++) {
+        this_leadsum += Number(thismonth_nippou_records[j]["リード合計"]["value"]);
       }
 
-      alert(store_records[i]["name"]["value"] + ":今月:" + nippous4store_value["今月問い合わせ数"]+"先月:"+ nippous4store_value["先月問い合わせ数"]);
+      //alert("this:"+String(this_leadsum)+"last:"+String(last_leadsum));
+
+
+
 
 
 
@@ -140,7 +143,10 @@ var monthly_records4post = {
           "value": 2
         },
       };
-
+      monthly_record4put["record"]["今月問い合わせ数"]["value"] = this_leadsum;
+      monthly_record4put["record"]["先月問い合わせ数"]["value"] = last_leadsum;
+      monthly_record4post["今月問い合わせ数"]["value"] = this_leadsum;
+      monthly_record4post["先月問い合わせ数"]["value"] = last_leadsum;
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
       for (var j = 0; j < monthly_records.length; j++)  {
@@ -159,6 +165,7 @@ var monthly_records4post = {
       }else {
         //monthly_record4putとmonthly_record4postをiの店に合うように変更。
         monthly_record4post["店舗名"]["value"] = store_records[i]["name"]["value"];
+
         monthly_records4post["records"].push(monthly_record4post);
       }
 
