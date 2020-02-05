@@ -7,9 +7,16 @@ else var strmonth = String(month);
 var stryear_month = String(year)+"-"+strmonth;
 
 //店舗情報を取得するためのJSON
-var store_body = {
+var store_body  = {
     "app": 57,
     "fields": ["id","name"]
+};
+
+//日報レコードを取得するためのJSON
+var nippou_body = {
+    "app": 83,
+    "fields": ["店舗ID","リード合計","来店数","販売台数"],
+    "query": "",//for文の中で各店舗ごとのクエリを作成して挿入
 };
 
 //月間報告レコードを取得するためのクエリとJSON
@@ -17,7 +24,7 @@ var monthly_records_query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_
 var monthly_records_body  = {
     "app": 84,
     "query": monthly_records_query,
-    "fields": ["レコード番号", "作成日時", "今月問い合わせ数","店舗名"]
+    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値"]
 };
 
 //月間報告レコードのPUT用、POST用JSON
@@ -47,15 +54,42 @@ var monthly_records4post = {
 
 
 
+
+
+
     for (var i = 0; i < store_records.length; i++)  {
+
+      //この店舗のクエリを挿入
+      nippou_body["query"] = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
+      var nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var nippou_records = nippou_resp["records"];
+      alert(store_records[i]["name"]["value"]+":"+JSON.stringify(nippou_records));
 
 
       var monthly_record4put   = {
-        "id": 159,
+        "id": 0,
         "record": {
           "今月問い合わせ数": {
-            "value": 1009
-          }
+            "value": 1
+          },
+          "先月問い合わせ数": {
+            "value": 1
+          },
+          "成約数合計": {
+            "value": 1
+          },
+          "仮契約合計": {
+            "value": 1
+          },
+          "当月着地予想": {
+            "value": 1
+          },
+          "目標成約台数": {
+            "value": 1
+          },
+          "ローン付帯値": {
+            "value": 1
+          },
         }
       };
       var monthly_record4post  = {
@@ -65,15 +99,33 @@ var monthly_records4post = {
         "月": {
           "value": month
         },
-        "今月問い合わせ数": {
-          "value": 999
-        },
         "店舗名":{
           "value": ""
-        }
+        },
+        "今月問い合わせ数": {
+          "value": 2
+        },
+        "先月問い合わせ数": {
+          "value": 2
+        },
+        "成約数合計": {
+          "value": 2
+        },
+        "仮契約数合計": {
+          "value": 2
+        },
+        "当月着地予想": {
+          "value": 2
+        },
+        "目標成約台数": {
+          "value": 2
+        },
+        "ローン付帯値": {
+          "value": 2
+        },
       };
 
-      
+
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
       for (var j = 0; j < monthly_records.length; j++)  {
