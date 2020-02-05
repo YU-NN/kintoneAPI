@@ -15,7 +15,7 @@ var store_body  = {
 //日報レコードを取得するためのJSON
 var nippou_body = {
     "app": 83,
-    "fields": ["店舗ID","リード合計","来店数","販売台数"],
+    "fields": ["店舗ID","リード合計","来店数","販売台数","作成日時"],
     "query": "",//for文の中で各店舗ごとのクエリを作成して挿入
 };
 
@@ -53,17 +53,33 @@ var monthly_records4post = {
 
 
 
-
-
-
-
     for (var i = 0; i < store_records.length; i++)  {
 
-      //この店舗のクエリを挿入
+
+
+      //この店舗の今月と先月の日報を取得
       nippou_body["query"] = "作成日時 = THIS_MONTH() or 作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
       var nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
       var nippou_records = nippou_resp["records"];
-      alert(store_records[i]["name"]["value"]+":"+JSON.stringify(nippou_records));
+      //alert(store_records[i]["name"]["value"]+":"+JSON.stringify(nippou_records));
+
+      //ある店舗の日報達の値の和などを一時保存しておくJSON
+      var nippous4store_value = {
+        "今月問い合わせ数":0,
+        "先月問い合わせ数":0,
+        "成約数合計":0,
+        "仮契約合計":0,
+        "当月着地予想":0,
+        "目標成約台数":0,
+        "ローン付帯値":0,
+      };
+      //この店舗の日報たちの値の和とかを取る。
+      for (var j = 0; j < nippou_records.length; j++) {
+        nippous4store_value["今月問い合わせ数"] += Number(nippou_records[j]["リード合計"]["value"]);
+      }
+
+      alert(store_records[i]["name"]["value"] + ":今月:" + nippous4store_value["今月問い合わせ数"]+"先月:"+ nippous4store_value["先月問い合わせ数"]);
+
 
 
       var monthly_record4put   = {
@@ -124,7 +140,6 @@ var monthly_records4post = {
           "value": 2
         },
       };
-
 
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
