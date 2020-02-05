@@ -63,7 +63,6 @@ var store_data = {};
 
         //処理
         for (var i = 0; i < store_data.length; i++) {
-
           var monthly_record4put   = {
             "id": 159,
             "record": {
@@ -101,7 +100,6 @@ var store_data = {};
             //更新用のJSONにPUSH
             monthly_records4put["records"].push(monthly_record4put);
           }else {
-
             //monthly_record4putとmonthly_record4postをiの店に合うように変更。
             monthly_record4post["店舗名"]["value"] = store_data[i]["name"]["value"];
             //作成用のJSONにPUSH
@@ -112,19 +110,12 @@ var store_data = {};
 
 
 
-
-
-
-
-
-
-
         return kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put);
       }).then(function(put_nippou_resp){
-        alert("PUT:" +JSON.stringify(monthly_records4put));
+        //alert("PUT:" +JSON.stringify(monthly_records4put));
         return kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
       }).then(function(post_nippou_resp){
-        alert("POST:"+JSON.stringify(monthly_records4post));
+        //alert("POST:"+JSON.stringify(monthly_records4post));
         return event;
       });
 
