@@ -24,7 +24,7 @@ var monthly_records_query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_
 var monthly_records_body  = {
     "app": 84,
     "query": monthly_records_query,
-    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値"]
+    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","今月成約数合計","先月成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値"]
 };
 
 //月間報告レコードのPUT用、POST用JSON
@@ -66,16 +66,22 @@ var monthly_records4post = {
       var thismonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
       var thismonth_nippou_records = thismonth_nippou_resp["records"];
 
+      //リード合計の合計の変数
       var last_leadsum = 0;
       var this_leadsum = 0;
+      //今月成約数合計の変数
+      var last_carsum = 0;
+      var this_carsum = 0;
 
       //先月のレコードを計算
       for (var j = 0; j < lastmonth_nippou_records.length; j++) {
         last_leadsum += Number(lastmonth_nippou_records[j]["リード合計"]["value"]);
+        last_carsum  += Number(lastmonth_nippou_records[j]["販売台数"]["value"]);
       }
       //今月のレコードを計算
       for (var j = 0; j < thismonth_nippou_records.length; j++) {
         this_leadsum += Number(thismonth_nippou_records[j]["リード合計"]["value"]);
+        this_carsum  += Number(thismonth_nippou_records[j]["販売台数"]["value"]);
       }
 
       //alert("this:"+String(this_leadsum)+"last:"+String(last_leadsum));
@@ -94,7 +100,10 @@ var monthly_records4post = {
           "先月問い合わせ数": {
             "value": 1
           },
-          "成約数合計": {
+          "今月成約数合計": {
+            "value": 1
+          },
+          "先月成約数合計": {
             "value": 1
           },
           "仮契約合計": {
@@ -127,7 +136,10 @@ var monthly_records4post = {
         "先月問い合わせ数": {
           "value": 2
         },
-        "成約数合計": {
+        "今月成約数合計": {
+          "value": 2
+        },
+        "先月成約数合計": {
           "value": 2
         },
         "仮契約数合計": {
@@ -147,6 +159,11 @@ var monthly_records4post = {
       monthly_record4put["record"]["先月問い合わせ数"]["value"] = last_leadsum;
       monthly_record4post["今月問い合わせ数"]["value"] = this_leadsum;
       monthly_record4post["先月問い合わせ数"]["value"] = last_leadsum;
+
+      monthly_record4put["record"]["今月成約数合計"]["value"] = this_carsum;
+      monthly_record4put["record"]["先月成約数合計"]["value"] = last_carsum;
+      monthly_record4post["今月成約数合計"]["value"] = this_carsum;
+      monthly_record4post["先月成約数合計"]["value"] = last_carsum;
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
       for (var j = 0; j < monthly_records.length; j++)  {
