@@ -2,7 +2,10 @@
 var now   = new Date();
 var year  = now.getFullYear();
 var month = now.getMonth()+1;
+if(month < 10) var strmonth = "0"+String(month);
+else var strmonth = String(month);
 
+var stryear_month = String(year)+"-"+strmonth;
 
 var storeMonthlyRecordId = 0;
 
@@ -87,7 +90,7 @@ var store_data = {};
           var boolIsAlreadyExist = false;
           for (var j = 0; j < get_monthly_resp["records"].length; j++) {
             //もしもすでに月間レコードがあったら、更新する処理を行う
-            if (get_monthly_resp["records"][j]["作成日時"]["value"].substr(0,7) == "2020-02" && get_monthly_resp["records"][j]["店舗名"]["value"] == store_data[i]["name"]["value"]) {
+            if (get_monthly_resp["records"][j]["作成日時"]["value"].substr(0,7) == stryear_month && get_monthly_resp["records"][j]["店舗名"]["value"] == store_data[i]["name"]["value"]) {
               boolIsAlreadyExist = true;
               monthly_record4put["id"] = Number(get_monthly_resp["records"][j]["レコード番号"]["value"]);
               //更新作業
