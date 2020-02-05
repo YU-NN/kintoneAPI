@@ -24,7 +24,7 @@ var monthly_records_query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_
 var monthly_records_body  = {
     "app": 84,
     "query": monthly_records_query,
-    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","今月成約数合計","先月成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値"]
+    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","今月成約数合計","先月成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値","成約率対問い合わせ数","成約数前月比"]
 };
 
 //月間報告レコードのPUT用、POST用JSON
@@ -106,6 +106,12 @@ var monthly_records4post = {
           "先月成約数合計": {
             "value": 1
           },
+          "成約率対問い合わせ数": {
+            "value": 1
+          },
+          "成約数前月比": {
+            "value": 1
+          },
           "仮契約合計": {
             "value": 1
           },
@@ -142,6 +148,12 @@ var monthly_records4post = {
         "先月成約数合計": {
           "value": 2
         },
+        "成約率対問い合わせ数": {
+          "value": 2
+        },
+        "成約数前月比": {
+          "value": 2
+        },
         "仮契約数合計": {
           "value": 2
         },
@@ -155,15 +167,27 @@ var monthly_records4post = {
           "value": 2
         },
       };
+
+      //問い合わせ数
       monthly_record4put["record"]["今月問い合わせ数"]["value"] = this_leadsum;
       monthly_record4put["record"]["先月問い合わせ数"]["value"] = last_leadsum;
       monthly_record4post["今月問い合わせ数"]["value"] = this_leadsum;
       monthly_record4post["先月問い合わせ数"]["value"] = last_leadsum;
 
+      //成約数
       monthly_record4put["record"]["今月成約数合計"]["value"] = this_carsum;
       monthly_record4put["record"]["先月成約数合計"]["value"] = last_carsum;
       monthly_record4post["今月成約数合計"]["value"] = this_carsum;
       monthly_record4post["先月成約数合計"]["value"] = last_carsum;
+
+      //成約率対問い合わせ数
+      monthly_record4post["成約率対問い合わせ数"]["value"] = (this_carsum/this_leadsum)*100;
+      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = (this_carsum/this_leadsum)*100;
+
+      //成約数前月比
+      monthly_record4post["成約数前月比"]["value"] = (this_carsum/last_carsum)*100;
+      monthly_record4put["record"]["成約数前月比"]["value"] = (this_carsum/last_carsum)*100;
+
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
       for (var j = 0; j < monthly_records.length; j++)  {
