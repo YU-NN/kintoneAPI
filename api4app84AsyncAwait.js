@@ -63,7 +63,7 @@ var twomonthago_total_leadsum = 0;
 
 var thismonth_total_carsum = 0;
 var lastmonth_total_carsum = 0;
-var twomonthago_total_leadsum = 0;
+var twomonthago_total_carsum = 0;
 
 
 
@@ -80,7 +80,100 @@ var twomonthago_total_leadsum = 0;
     var monthly_records = monthly_records_resp["records"];
 
 
+
+
     /////////＜ここから＞が先月分の定例会レコードの更新、作成部分///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////＜ここから＞が先月分の合計レコード作成部分////////////////////////////
+    var monthly_sum_record4put   = {
+      "id": 0,
+      "record": {
+        "今月問い合わせ数": {
+          "value": 0
+        },
+        "先月問い合わせ数": {
+          "value": 0
+        },
+        "今月成約数合計": {
+          "value": 0
+        },
+        "先月成約数合計": {
+          "value": 0
+        },
+        "成約率対問い合わせ数": {
+          "value": 0
+        },
+        "成約数前月比": {
+          "value": 0
+        },
+        "仮契約合計": {
+          "value": 0
+        },
+        "当月着地予想": {
+          "value": 0
+        },
+        "目標成約台数": {
+          "value": 0
+        },
+        "ローン付帯値": {
+          "value": 0
+        },
+      }
+    };
+    var monthly_sum_record4post  = {
+      "西暦": {
+        "value": year1ago
+      },
+      "月": {
+        "value": month1ago
+      },
+      "店舗名":{
+        "value": "合計"
+      },
+      "今月問い合わせ数": {
+        "value": 0
+      },
+      "先月問い合わせ数": {
+        "value": 0
+      },
+      "今月成約数合計": {
+        "value": 0
+      },
+      "先月成約数合計": {
+        "value": 0
+      },
+      "成約率対問い合わせ数": {
+        "value": 0
+      },
+      "成約数前月比": {
+        "value": 0
+      },
+      "仮契約数合計": {
+        "value": 0
+      },
+      "当月着地予想": {
+        "value": 0
+      },
+      "目標成約台数": {
+        "value": 0
+      },
+      "ローン付帯値": {
+        "value": 0
+      },
+    };
+    var boolIsSumRowExist = false;
+    for (var i = 0; i < monthly_records.length; i++) {
+      if(monthly_records[i]["西暦"]["value"] == String(year1ago) && monthly_records[i]["月"]["value"] == String(month1ago) && monthly_records[i]["店舗名"]["value"] == "合計"){
+        boolIsSumRowExist = true;
+        monthly_sum_record4put["id"] = Number(monthly_records[i]["レコード番号"]["value"]);
+      }
+    }
+    if(boolIsSumRowExist) monthly_records4put["records"].push(monthly_sum_record4put);
+    else monthly_records4post["records"].push(monthly_sum_record4post);
+    ////////＜ここまで＞が先月分の合計レコード作成部分///////////////////////////////////////
+
+
+
     for (var i = 0; i < store_records.length; i++) {
       nippou_body["query"] = query_2monthago + " and 店舗ID = " + store_records[i]["id"]["value"];
       var twomonthago_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
@@ -111,9 +204,9 @@ var twomonthago_total_leadsum = 0;
       }
 
       lastmonth_total_leadsum   += last_leadsum;
-      twomonthago_total_leadsum += twomonthago_leadsum;
       lastmonth_total_carsum    += last_carsum;
-      twomonthago_total_leadsum += twomonthago_carsum;
+      twomonthago_total_leadsum += twomonthago_leadsum;
+      twomonthago_total_carsum  += twomonthago_carsum;
 
       var monthly_record4put   = {
         "id": 0,
@@ -233,9 +326,28 @@ var twomonthago_total_leadsum = 0;
         monthly_records4post["records"].push(monthly_record4post);
       }
 
-
-
     }
+
+    if (boolIsSumRowExist){
+      monthly_records4put["records"][0]["record"]["今月問い合わせ数"]["value"]     = lastmonth_total_leadsum;
+      monthly_records4put["records"][0]["record"]["先月問い合わせ数"]["value"]     = twomonthago_total_leadsum;
+      monthly_records4put["records"][0]["record"]["今月成約数合計"]["value"]     　= lastmonth_total_carsum;
+      monthly_records4put["records"][0]["record"]["先月成約数合計"]["value"]     　= twomonthago_total_carsum;
+      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = (lastmonth_total_carsum/lastmonth_total_leadsum)*100;
+      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (lastmonth_total_carsum/twomonthago_total_carsum)*100;}
+    else{
+      monthly_records4post["records"][0]["今月問い合わせ数"]["value"] = lastmonth_total_leadsum;
+      monthly_records4post["records"][0]["先月問い合わせ数"]["value"] = twomonthago_total_leadsum;
+      monthly_records4post["records"][0]["今月成約数合計"]["value"] 　= lastmonth_total_carsum;
+      monthly_records4post["records"][0]["先月成約数合計"]["value"] 　= twomonthago_total_carsum;
+    }
+    lastmonth_total_leadsum = 0;
+    twomonthago_total_leadsum = 0;
+
+    lastmonth_total_carsum = 0;
+    twomonthago_total_carsum = 0;
+
+
     await kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put );
     await kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
     monthly_records4put["records"]  = [];
@@ -329,7 +441,7 @@ var twomonthago_total_leadsum = 0;
     };
     var boolIsSumRowExist = false;
     for (var i = 0; i < monthly_records.length; i++) {
-      if(monthly_records[i]["作成日時"]["value"].substr(0,7) == str_this_year_month && monthly_records[i]["店舗名"]["value"] == "合計"){
+      if(monthly_records[i]["西暦"]["value"] == String(year) && monthly_records[i]["月"]["value"] == String(month) && monthly_records[i]["店舗名"]["value"] == "合計"){
         boolIsSumRowExist = true;
         monthly_sum_record4put["id"] = Number(monthly_records[i]["レコード番号"]["value"]);
       }
