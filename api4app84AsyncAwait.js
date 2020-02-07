@@ -6,10 +6,25 @@ if(month < 10) var strmonth = "0"+String(month);
 else var strmonth = String(month);
 var stryear_month = String(year)+"-"+strmonth;
 
+//2ヶ月前の日報レコードを取得するためのクエリを作成。
+var month1ago = (month<=1)? month+11:month-1;
+var month2ago = (month<=2)? month+10:month-2;
+
+var year1ago = (month<=1)? year-1:year;
+var year2ago = (month<=2)? year-1:year;
+function YM1st_query(year,month){
+    var stryear = String(year);
+    var strmonth = (month<10)? "0"+String(month):String(month);
+    var query = "\"" + stryear + "-" + strmonth + "-01T00:00:00+0900\"";
+    return query;
+}
+var query_2monthago = "作成日時 < "+YM1st_query(year1ago,month1ago)+" and 作成日時 >= "+YM1st_query(year2ago,month2ago);
+
+
 //店舗情報を取得するためのJSON
 var store_body  = {
     "app": 57,
-    "fields": ["id","name"]
+    "fields": ["作成日時","id","name"]
 };
 
 //日報レコードを取得するためのJSON
@@ -55,6 +70,8 @@ var lastmonth_total_carsum = 0;
     //店舗情報と、月間報告レコードから中身を取得
     var store_records   = store_resp["records"];
     var monthly_records = monthly_records_resp["records"];
+
+    alert(query_2monthago);
 
 
 
