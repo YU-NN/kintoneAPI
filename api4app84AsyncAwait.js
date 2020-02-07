@@ -95,34 +95,34 @@ var monthly_records4post = {
         "id": 0,
         "record": {
           "今月問い合わせ数": {
-            "value": 1
+            "value": 0
           },
           "先月問い合わせ数": {
-            "value": 1
+            "value": 0
           },
           "今月成約数合計": {
-            "value": 1
+            "value": 0
           },
           "先月成約数合計": {
-            "value": 1
+            "value": 0
           },
           "成約率対問い合わせ数": {
-            "value": 1
+            "value": 0
           },
           "成約数前月比": {
-            "value": 1
+            "value": 0
           },
           "仮契約合計": {
-            "value": 1
+            "value": 0
           },
           "当月着地予想": {
-            "value": 1
+            "value": 0
           },
           "目標成約台数": {
-            "value": 1
+            "value": 0
           },
           "ローン付帯値": {
-            "value": 1
+            "value": 0
           },
         }
       };
@@ -137,34 +137,34 @@ var monthly_records4post = {
           "value": ""
         },
         "今月問い合わせ数": {
-          "value": 2
+          "value": 0
         },
         "先月問い合わせ数": {
-          "value": 2
+          "value": 0
         },
         "今月成約数合計": {
-          "value": 2
+          "value": 0
         },
         "先月成約数合計": {
-          "value": 2
+          "value": 0
         },
         "成約率対問い合わせ数": {
-          "value": 2
+          "value": 0
         },
         "成約数前月比": {
-          "value": 2
+          "value": 0
         },
         "仮契約数合計": {
-          "value": 2
+          "value": 0
         },
         "当月着地予想": {
-          "value": 2
+          "value": 0
         },
         "目標成約台数": {
-          "value": 2
+          "value": 0
         },
         "ローン付帯値": {
-          "value": 2
+          "value": 0
         },
       };
 
