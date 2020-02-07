@@ -173,12 +173,14 @@ var lastmonth_total_carsum = 0;
 
 
     for (var i = 0; i < store_records.length; i++)  {
+      
+      nippou_body["query"] = query_2monthago + " and 店舗ID = " + store_records[i]["id"]["value"];
+      var twomonthago_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var twomonthago_nippou_records = twomonthago_nippou_resp["records"];
 
       nippou_body["query"] = "作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
       var lastmonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
       var lastmonth_nippou_records = lastmonth_nippou_resp["records"];
-
-
 
       //この店舗の今月と先月の日報を取得
       nippou_body["query"] = "作成日時 = THIS_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
