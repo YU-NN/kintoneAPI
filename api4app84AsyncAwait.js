@@ -110,6 +110,104 @@ var twomonthago_total_leadsum = 0;
       lastmonth_total_carsum    += last_carsum;
       twomonthago_total_leadsum += twomonthago_carsum;
 
+      var monthly_record4put   = {
+        "id": 0,
+        "record": {
+          "今月問い合わせ数": {
+            "value": 0
+          },
+          "先月問い合わせ数": {
+            "value": 0
+          },
+          "今月成約数合計": {
+            "value": 0
+          },
+          "先月成約数合計": {
+            "value": 0
+          },
+          "成約率対問い合わせ数": {
+            "value": 0
+          },
+          "成約数前月比": {
+            "value": 0
+          },
+          "仮契約合計": {
+            "value": 0
+          },
+          "当月着地予想": {
+            "value": 0
+          },
+          "目標成約台数": {
+            "value": 0
+          },
+          "ローン付帯値": {
+            "value": 0
+          },
+        }
+      };
+      var monthly_record4post  = {
+        "西暦": {
+          "value": year
+        },
+        "月": {
+          "value": month
+        },
+        "店舗名":{
+          "value": ""
+        },
+        "今月問い合わせ数": {
+          "value": 0
+        },
+        "先月問い合わせ数": {
+          "value": 0
+        },
+        "今月成約数合計": {
+          "value": 0
+        },
+        "先月成約数合計": {
+          "value": 0
+        },
+        "成約率対問い合わせ数": {
+          "value": 0
+        },
+        "成約数前月比": {
+          "value": 0
+        },
+        "仮契約数合計": {
+          "value": 0
+        },
+        "当月着地予想": {
+          "value": 0
+        },
+        "目標成約台数": {
+          "value": 0
+        },
+        "ローン付帯値": {
+          "value": 0
+        },
+      };
+
+      //先月用のこの店舗の問い合わせ数
+      monthly_record4put["record"]["今月問い合わせ数"]["value"] = last_leadsum;
+      monthly_record4put["record"]["先月問い合わせ数"]["value"] = twomonthago_leadsum;
+      monthly_record4post["今月問い合わせ数"]["value"] = last_leadsum;
+      monthly_record4post["先月問い合わせ数"]["value"] = twomonthago_leadsum;
+
+      //先月用のこの店舗の成約数
+      monthly_record4put["record"]["今月成約数合計"]["value"] = last_carsum;
+      monthly_record4put["record"]["先月成約数合計"]["value"] = twomonthago_carsum;
+      monthly_record4post["今月成約数合計"]["value"] = last_carsum;
+      monthly_record4post["先月成約数合計"]["value"] = twomonthago_carsum;
+
+      //先月用のこの店舗の成約率対問い合わせ数
+      monthly_record4post["成約率対問い合わせ数"]["value"] = (last_carsum/last_leadsum)*100;
+      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = (last_carsum/twomonthago_leadsum)*100;
+
+      //先月用のこの店舗の成約数前月比
+      monthly_record4post["成約数前月比"]["value"] = (last_carsum/twomonthago_carsum)*100;
+      monthly_record4put["record"]["成約数前月比"]["value"] = (last_carsum/twomonthago_carsum)*100;
+
+
 
     }
     /////////＜ここまで＞が先月分の定例会レコードの更新、作成部分/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
