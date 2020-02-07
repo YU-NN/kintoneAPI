@@ -54,8 +54,11 @@ var monthly_records4post = {
 
 var thismonth_total_leadsum = 0;
 var lastmonth_total_leadsum = 0;
+var twomonthago_total_leadsum = 0;
+
 var thismonth_total_carsum = 0;
 var lastmonth_total_carsum = 0;
+var twomonthago_total_leadsum = 0;
 
 
 
@@ -71,12 +74,55 @@ var lastmonth_total_carsum = 0;
     var store_records   = store_resp["records"];
     var monthly_records = monthly_records_resp["records"];
 
-    alert(query_2monthago);
+
+    /////////＜ここから＞が先月分の定例会レコードの更新、作成部分///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (var i = 0; i < store_records.length; i++) {
+      nippou_body["query"] = query_2monthago + " and 店舗ID = " + store_records[i]["id"]["value"];
+      var twomonthago_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var twomonthago_nippou_records = twomonthago_nippou_resp["records"];
+
+      nippou_body["query"] = "作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
+      var lastmonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
+      var lastmonth_nippou_records = lastmonth_nippou_resp["records"];
+
+
+      //リード合計の合計の変数
+      var twomonthago_leadsum = 0;
+      var last_leadsum = 0;
+      //今月成約数合計の変数
+      var twomonthago_carsum = 0;
+      var last_carsum = 0;
+
+      //2ヶ月前の各店舗のレコードを計算して、この店舗のリード合計と成約数合計を計算
+      for (var j = 0; j < twomonthago_nippou_records.length; j++) {
+        twomonthago_leadsum += Number(twomonthago_nippou_records[j]["リード合計"]["value"]);
+        twomonthago_carsum  += Number(twomonthago_nippou_records[j]["販売台数"]["value"]);
+      }
+
+      //先月の各店舗のレコードを計算して、この店舗のリード合計と成約数合計を計算
+      for (var j = 0; j < lastmonth_nippou_records.length; j++) {
+        last_leadsum += Number(lastmonth_nippou_records[j]["リード合計"]["value"]);
+        last_carsum  += Number(lastmonth_nippou_records[j]["販売台数"]["value"]);
+      }
+
+      lastmonth_total_leadsum   += last_leadsum;
+      twomonthago_total_leadsum += twomonthago_leadsum;
+      lastmonth_total_carsum    += last_carsum;
+      twomonthago_total_leadsum += twomonthago_carsum;
+
+
+    }
+    /////////＜ここまで＞が先月分の定例会レコードの更新、作成部分/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
 
+　　/////////＜ここから＞が今月分の定例会レコードの更新、作成部分///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    ////////＜ここから＞が今月分の合計レコード作成部分////////////////////////////
     var monthly_sum_record4put   = {
       "id": 0,
       "record": {
@@ -162,21 +208,12 @@ var lastmonth_total_carsum = 0;
     }
     if(boolIsSumRowExist) monthly_records4put["records"].push(monthly_sum_record4put);
     else monthly_records4post["records"].push(monthly_sum_record4post);
-
-
-
-
-
-
+    ////////＜ここまで＞が今月分の合計レコード作成部分///////////////////////////////////////
 
 
 
 
     for (var i = 0; i < store_records.length; i++)  {
-      
-      nippou_body["query"] = query_2monthago + " and 店舗ID = " + store_records[i]["id"]["value"];
-      var twomonthago_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
-      var twomonthago_nippou_records = twomonthago_nippou_resp["records"];
 
       nippou_body["query"] = "作成日時 = LAST_MONTH() and 店舗ID = " + store_records[i]["id"]["value"];
       var lastmonth_nippou_resp    = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', nippou_body);
@@ -194,12 +231,13 @@ var lastmonth_total_carsum = 0;
       var last_carsum = 0;
       var this_carsum = 0;
 
-      //先月のレコードを計算
+
+      //先月の各店舗のレコードを計算して、この店舗のリード合計と成約数合計を計算
       for (var j = 0; j < lastmonth_nippou_records.length; j++) {
         last_leadsum += Number(lastmonth_nippou_records[j]["リード合計"]["value"]);
         last_carsum  += Number(lastmonth_nippou_records[j]["販売台数"]["value"]);
       }
-      //今月のレコードを計算
+      //今月の各店舗のレコードを計算して、この店舗のリード合計と成約数合計を計算
       for (var j = 0; j < thismonth_nippou_records.length; j++) {
         this_leadsum += Number(thismonth_nippou_records[j]["リード合計"]["value"]);
         this_carsum  += Number(thismonth_nippou_records[j]["販売台数"]["value"]);
@@ -208,12 +246,10 @@ var lastmonth_total_carsum = 0;
       //合計レコードに入れるための全店舗の合計を計算
       thismonth_total_leadsum += this_leadsum;
       lastmonth_total_leadsum += last_leadsum;
+
+
       thismonth_total_carsum  += this_carsum;
       lastmonth_total_carsum  += last_carsum;
-
-
-
-
 
 
       var monthly_record4put   = {
@@ -340,27 +376,26 @@ var lastmonth_total_carsum = 0;
     }
 
     //合計レコードに値を代入するが、すでに合計レコードがあった場合は、PUT用のところの値を更新、なかった場合は、POST用のところの値を更新する。
-    if (boolIsSumRowExist) {
+    if (boolIsSumRowExist){
       monthly_records4put["records"][0]["record"]["今月問い合わせ数"]["value"]     = thismonth_total_leadsum;
       monthly_records4put["records"][0]["record"]["先月問い合わせ数"]["value"]     = lastmonth_total_leadsum;
       monthly_records4put["records"][0]["record"]["今月成約数合計"]["value"]     　= thismonth_total_carsum;
       monthly_records4put["records"][0]["record"]["先月成約数合計"]["value"]     　= lastmonth_total_carsum;
       monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = (thismonth_total_carsum/thismonth_total_leadsum)*100;
-      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (thismonth_total_carsum/lastmonth_total_carsum)*100;
-    }else{
+      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (thismonth_total_carsum/lastmonth_total_carsum)*100;}
+    else{
       monthly_records4post["records"][0]["今月問い合わせ数"]["value"] = thismonth_total_leadsum;
       monthly_records4post["records"][0]["先月問い合わせ数"]["value"] = lastmonth_total_leadsum;
       monthly_records4post["records"][0]["今月成約数合計"]["value"] 　= thismonth_total_carsum;
       monthly_records4post["records"][0]["先月成約数合計"]["value"] 　= lastmonth_total_carsum;
     }
 
-
     alert(JSON.stringify(monthly_records4post));
     alert(JSON.stringify(monthly_records4put));
 
     await kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put );
     await kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
-
+    /////////＜ここまで＞が今月分の定例会レコードの更新、作成部分/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
