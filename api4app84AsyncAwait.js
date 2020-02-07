@@ -37,7 +37,10 @@ var monthly_records4post = {
   "records": []
 };
 
-
+var thismonth_total_leadsum = 0;
+var lastmonth_total_leadsum = 0;
+var thismonth_total_carsum = 0;
+var lastmonth_total_carsum = 0;
 
 
 
@@ -143,7 +146,7 @@ var monthly_records4post = {
     if(boolIsSumRowExist) monthly_records4put["records"].push(monthly_sum_record4put);
     else monthly_records4post["records"].push(monthly_sum_record4post);
 
-  
+
 
 
 
@@ -183,7 +186,11 @@ var monthly_records4post = {
         this_carsum  += Number(thismonth_nippou_records[j]["販売台数"]["value"]);
       }
 
-      //alert("this:"+String(this_leadsum)+"last:"+String(last_leadsum));
+      //合計レコードに入れるための全店舗の合計を計算
+      thismonth_total_leadsum += this_leadsum;
+      lastmonth_total_leadsum += last_leadsum;
+      thismonth_total_carsum  += this_carsum;
+      lastmonth_total_carsum  += last_carsum;
 
 
 
@@ -313,11 +320,30 @@ var monthly_records4post = {
 
     }
 
+    //合計レコードに値を代入するが、すでに合計レコードがあった場合は、PUT用のところの値を更新、なかった場合は、POST用のところの値を更新する。
+    if (boolIsSumRowExist) {
+      monthly_records4put["records"][0]["record"]["今月問い合わせ数"]["value"]     = thismonth_total_leadsum;
+      monthly_records4put["records"][0]["record"]["先月問い合わせ数"]["value"]     = lastmonth_total_leadsum;
+      monthly_records4put["records"][0]["record"]["今月成約数合計"]["value"]     　= thismonth_total_carsum;
+      monthly_records4put["records"][0]["record"]["先月成約数合計"]["value"]     　= lastmonth_total_carsum;
+      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = (thismonth_total_carsum/thismonth_total_leadsum)*100;
+      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (thismonth_total_carsum/lastmonth_total_carsum)*100;
+    }else{
+      monthly_records4post["records"][0]["今月問い合わせ数"]["value"] = thismonth_total_leadsum;
+      monthly_records4post["records"][0]["先月問い合わせ数"]["value"] = lastmonth_total_leadsum;
+      monthly_records4post["records"][0]["今月成約数合計"]["value"] 　= thismonth_total_carsum;
+      monthly_records4post["records"][0]["先月成約数合計"]["value"] 　= lastmonth_total_carsum;
+    }
+
+
     alert(JSON.stringify(monthly_records4post));
     alert(JSON.stringify(monthly_records4put));
 
     await kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put );
     await kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
+
+
+
 
 
     return event;
