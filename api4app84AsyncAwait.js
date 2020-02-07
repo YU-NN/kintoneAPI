@@ -2,16 +2,18 @@
 var now   = new Date();
 var year  = now.getFullYear();
 var month = now.getMonth()+1;
-if(month < 10) var strmonth = "0"+String(month);
-else var strmonth = String(month);
-var stryear_month = String(year)+"-"+strmonth;
 
 //2ヶ月前の日報レコードを取得するためのクエリを作成。
 var month1ago = (month<=1)? month+11:month-1;
 var month2ago = (month<=2)? month+10:month-2;
-
+var strthismonth = (month<10)? "0"+String(month):String(month);
+var strlastmonth = String(month1ago);
 var year1ago = (month<=1)? year-1:year;
 var year2ago = (month<=2)? year-1:year;
+
+var str_this_year_month = String(year)+"-"+strthismonth;
+var str_last_year_month = String(year1ago)+"-"+strlastmonth;
+
 function YM1st_query(year,month){
     var stryear = String(year);
     var strmonth = (month<10)? "0"+String(month):String(month);
@@ -19,6 +21,9 @@ function YM1st_query(year,month){
     return query;
 }
 var query_2monthago = "作成日時 < "+YM1st_query(year1ago,month1ago)+" and 作成日時 >= "+YM1st_query(year2ago,month2ago);
+
+
+
 
 
 //店舗情報を取得するためのJSON
@@ -39,7 +44,7 @@ var monthly_records_query = "作成日時 = THIS_MONTH() or 作成日時 = LAST_
 var monthly_records_body  = {
     "app": 84,
     "query": monthly_records_query,
-    "fields": ["レコード番号", "作成日時","店舗名","今月問い合わせ数","先月問い合わせ数","今月成約数合計","先月成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値","成約率対問い合わせ数","成約数前月比"]
+    "fields": ["レコード番号", "作成日時","西暦","月","店舗名","今月問い合わせ数","先月問い合わせ数","今月成約数合計","先月成約数合計","仮契約合計","当月着地予想","目標成約台数","ローン付帯値","成約率対問い合わせ数","成約数前月比"]
 };
 
 //月間報告レコードのPUT用、POST用JSON
@@ -147,10 +152,10 @@ var twomonthago_total_leadsum = 0;
       };
       var monthly_record4post  = {
         "西暦": {
-          "value": year
+          "value": year1ago
         },
         "月": {
-          "value": month
+          "value": month1ago
         },
         "店舗名":{
           "value": ""
@@ -209,7 +214,32 @@ var twomonthago_total_leadsum = 0;
 
 
 
+      //この店舗の月間レコードは無いと仮定。
+      var boolIsAlreadyExist = false;
+      for (var j = 0; j < monthly_records.length; j++)  {
+        //もしもすでに月間レコードがあったら、更新する処理を行う
+        if (monthly_records[j]["西暦"]["value"] == String(year1ago) && monthly_records[j]["月"]["value"] == String(month1ago) && monthly_records[j]["店舗名"]["value"] == store_records[i]["name"]["value"]) {
+          boolIsAlreadyExist = true;
+          monthly_record4put["id"] = Number(monthly_records[j]["レコード番号"]["value"]);
+        }
+      }
+
+      //すでにあったら、更新。そうでなければ作成
+      if (boolIsAlreadyExist) {
+        monthly_records4put["records"].push(monthly_record4put);
+      }else {
+        //monthly_record4putとmonthly_record4postをiの店に合うように変更。
+        monthly_record4post["店舗名"]["value"] = store_records[i]["name"]["value"];
+        monthly_records4post["records"].push(monthly_record4post);
+      }
+
+
+
     }
+    await kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put );
+    await kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
+    monthly_records4put["records"]  = [];
+    monthly_records4post["records"] = [];
     /////////＜ここまで＞が先月分の定例会レコードの更新、作成部分/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -299,7 +329,7 @@ var twomonthago_total_leadsum = 0;
     };
     var boolIsSumRowExist = false;
     for (var i = 0; i < monthly_records.length; i++) {
-      if(monthly_records[i]["作成日時"]["value"].substr(0,7) == stryear_month && monthly_records[i]["店舗名"]["value"] == "合計"){
+      if(monthly_records[i]["作成日時"]["value"].substr(0,7) == str_this_year_month && monthly_records[i]["店舗名"]["value"] == "合計"){
         boolIsSumRowExist = true;
         monthly_sum_record4put["id"] = Number(monthly_records[i]["レコード番号"]["value"]);
       }
@@ -451,7 +481,7 @@ var twomonthago_total_leadsum = 0;
       var boolIsAlreadyExist = false;
       for (var j = 0; j < monthly_records.length; j++)  {
         //もしもすでに月間レコードがあったら、更新する処理を行う
-        if (monthly_records[j]["作成日時"]["value"].substr(0,7) == stryear_month && monthly_records[j]["店舗名"]["value"] == store_records[i]["name"]["value"]) {
+        if (monthly_records[j]["西暦"]["value"] == String(year) && monthly_records[j]["月"]["value"] == String(month) && monthly_records[j]["店舗名"]["value"] == store_records[i]["name"]["value"]) {
           boolIsAlreadyExist = true;
           monthly_record4put["id"] = Number(monthly_records[j]["レコード番号"]["value"]);
           //更新作業
