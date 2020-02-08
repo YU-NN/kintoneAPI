@@ -11,8 +11,6 @@ var strlastmonth = String(month1ago);
 var year1ago = (month<=1)? year-1:year;
 var year2ago = (month<=2)? year-1:year;
 
-var str_this_year_month = String(year)+"-"+strthismonth;
-var str_last_year_month = String(year1ago)+"-"+strlastmonth;
 
 function YM1st_query(year,month){
     var stryear = String(year);
@@ -56,7 +54,34 @@ var monthly_records4post = {
   "app": 84,
   "records": []
 };
-
+function Reset_monthly_record4put(monthly_record4put){
+    monthly_record4put["id"] = 0;
+    monthly_record4put["record"]["今月問い合わせ数"]["value"]     = 0;
+    monthly_record4put["record"]["先月問い合わせ数"]["value"]     = 0;
+    monthly_record4put["record"]["今月成約数合計"]["value"]     　= 0;
+    monthly_record4put["record"]["先月成約数合計"]["value"]     　= 0;
+    monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = 0;
+    monthly_record4put["record"]["成約数前月比"]["value"]         = 0;
+    monthly_record4put["record"]["仮契約合計"]["value"]           = 0;
+    monthly_record4put["record"]["当月着地予想"]["value"]         = 0;
+    monthly_record4put["record"]["目標成約台数"]["value"]         = 0;
+    monthly_record4put["record"]["ローン付帯値"]["value"]         = 0;
+}
+function Reset_monthly_record4post(monthly_record4post){
+    monthly_record4post["西暦"]["value"]       = 0;
+    monthly_record4post["月"]["value"]         = 0;
+    monthly_record4post["店舗名"]["value"]     = "";
+    monthly_record4post["今月問い合わせ数"]["value"]     = 0;
+    monthly_record4post["先月問い合わせ数"]["value"]     = 0;
+    monthly_record4post["今月成約数合計"]["value"]     　= 0;
+    monthly_record4post["先月成約数合計"]["value"]     　= 0;
+    monthly_record4post["成約率対問い合わせ数"]["value"] = 0;
+    monthly_record4post["成約数前月比"]["value"]         = 0;
+    monthly_record4post["仮契約合計"]["value"]           = 0;
+    monthly_record4post["当月着地予想"]["value"]         = 0;
+    monthly_record4post["目標成約台数"]["value"]         = 0;
+    monthly_record4post["ローン付帯値"]["value"]         = 0;
+}
 var thismonth_total_leadsum = 0;
 var lastmonth_total_leadsum = 0;
 var twomonthago_total_leadsum = 0;
@@ -148,7 +173,7 @@ var twomonthago_total_carsum = 0;
       "成約数前月比": {
         "value": 0
       },
-      "仮契約数合計": {
+      "仮契約合計": {
         "value": 0
       },
       "当月着地予想": {
@@ -271,7 +296,7 @@ var twomonthago_total_carsum = 0;
         "成約数前月比": {
           "value": 0
         },
-        "仮契約数合計": {
+        "仮契約合計": {
           "value": 0
         },
         "当月着地予想": {
@@ -426,7 +451,7 @@ var twomonthago_total_carsum = 0;
       "成約数前月比": {
         "value": 0
       },
-      "仮契約数合計": {
+      "仮契約合計": {
         "value": 0
       },
       "当月着地予想": {
@@ -555,7 +580,7 @@ var twomonthago_total_carsum = 0;
         "成約数前月比": {
           "value": 0
         },
-        "仮契約数合計": {
+        "仮契約合計": {
           "value": 0
         },
         "当月着地予想": {
