@@ -176,20 +176,6 @@ var twomonthago_total_carsum = 0;
         "value": 0
       },
     };
-    //店舗情報と、月間報告レコードを取得
-    var store_resp           = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', store_body);
-    var monthly_records_resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', monthly_records_body);
-
-    //店舗情報と、月間報告レコードから中身を取得
-    var store_records   = store_resp["records"];
-    var monthly_records = monthly_records_resp["records"];
-
-
-
-
-    /////////＜ここから＞が先月分の定例会レコードの更新、作成部分///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    ////////＜ここから＞が先月分の合計レコード作成部分////////////////////////////
     var monthly_sum_record4put   = {
       "id": 0,
       "record": {
@@ -233,7 +219,7 @@ var twomonthago_total_carsum = 0;
         "value": month1ago
       },
       "店舗名":{
-        "value": "合計"
+        "value": ""
       },
       "今月問い合わせ数": {
         "value": 0
@@ -266,6 +252,25 @@ var twomonthago_total_carsum = 0;
         "value": 0
       },
     };
+    //店舗情報と、月間報告レコードを取得
+    var store_resp           = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', store_body);
+    var monthly_records_resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', monthly_records_body);
+
+    //店舗情報と、月間報告レコードから中身を取得
+    var store_records   = store_resp["records"];
+    var monthly_records = monthly_records_resp["records"];
+
+
+
+
+    /////////＜ここから＞が先月分の定例会レコードの更新、作成部分///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////＜ここから＞が先月分の合計レコード作成部分////////////////////////////
+    Reset_monthly_record4put(monthly_sum_record4put);
+    Reset_monthly_record4post(monthly_sum_record4post);
+    monthly_sum_record4post["店舗名"]["value"]     = "合計";
+    monthly_sum_record4post["西暦"]["value"]       = year1ago;
+    monthly_sum_record4post["月"]["value"]         = month1ago;
     var boolIsSumRowExist = false;
     for (var i = 0; i < monthly_records.length; i++) {
       if(monthly_records[i]["西暦"]["value"] == String(year1ago) && monthly_records[i]["月"]["value"] == String(month1ago) && monthly_records[i]["店舗名"]["value"] == "合計"){
@@ -403,82 +408,11 @@ var twomonthago_total_carsum = 0;
 
 
     ////////＜ここから＞が今月分の合計レコード作成部分////////////////////////////
-    var monthly_sum_record4put   = {
-      "id": 0,
-      "record": {
-        "今月問い合わせ数": {
-          "value": 0
-        },
-        "先月問い合わせ数": {
-          "value": 0
-        },
-        "今月成約数合計": {
-          "value": 0
-        },
-        "先月成約数合計": {
-          "value": 0
-        },
-        "成約率対問い合わせ数": {
-          "value": 0
-        },
-        "成約数前月比": {
-          "value": 0
-        },
-        "仮契約合計": {
-          "value": 0
-        },
-        "当月着地予想": {
-          "value": 0
-        },
-        "目標成約台数": {
-          "value": 0
-        },
-        "ローン付帯値": {
-          "value": 0
-        },
-      }
-    };
-    var monthly_sum_record4post  = {
-      "西暦": {
-        "value": year
-      },
-      "月": {
-        "value": month
-      },
-      "店舗名":{
-        "value": "合計"
-      },
-      "今月問い合わせ数": {
-        "value": 0
-      },
-      "先月問い合わせ数": {
-        "value": 0
-      },
-      "今月成約数合計": {
-        "value": 0
-      },
-      "先月成約数合計": {
-        "value": 0
-      },
-      "成約率対問い合わせ数": {
-        "value": 0
-      },
-      "成約数前月比": {
-        "value": 0
-      },
-      "仮契約合計": {
-        "value": 0
-      },
-      "当月着地予想": {
-        "value": 0
-      },
-      "目標成約台数": {
-        "value": 0
-      },
-      "ローン付帯値": {
-        "value": 0
-      },
-    };
+    Reset_monthly_record4put(monthly_sum_record4put);
+    Reset_monthly_record4post(monthly_sum_record4post);
+    monthly_sum_record4post["店舗名"]["value"]     = "合計";
+    monthly_sum_record4post["西暦"]["value"]       = year;
+    monthly_sum_record4post["月"]["value"]         = month;
     var boolIsSumRowExist = false;
     for (var i = 0; i < monthly_records.length; i++) {
       if(monthly_records[i]["西暦"]["value"] == String(year) && monthly_records[i]["月"]["value"] == String(month) && monthly_records[i]["店舗名"]["value"] == "合計"){
@@ -572,7 +506,7 @@ var twomonthago_total_carsum = 0;
       }
 
 
-      
+
 
       //すでにあったら、更新。そうでなければ作成
       if (boolIsAlreadyExist) {
