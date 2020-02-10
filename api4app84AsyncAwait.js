@@ -339,12 +339,12 @@ var twomonthago_total_carsum = 0;
       monthly_record4post["先月成約数合計"]["value"] = twomonthago_carsum;
 
       //先月用のこの店舗の成約率対問い合わせ数
-      monthly_record4post["成約率対問い合わせ数"]["value"] = (last_carsum/last_leadsum)*100;
-      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = (last_carsum/twomonthago_leadsum)*100;
+      monthly_record4post["成約率対問い合わせ数"]["value"] = Number((((last_carsum/last_leadsum)*100)).toFixed(2));
+      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = Number((((last_carsum/twomonthago_leadsum)*100)).toFixed(2));
 
       //先月用のこの店舗の成約数前月比
-      monthly_record4post["成約数前月比"]["value"] = (last_carsum/twomonthago_carsum)*100;
-      monthly_record4put["record"]["成約数前月比"]["value"] = (last_carsum/twomonthago_carsum)*100;
+      monthly_record4post["成約数前月比"]["value"] = Number((((last_carsum/twomonthago_carsum)*100)).toFixed(2));
+      monthly_record4put["record"]["成約数前月比"]["value"] = Number((((last_carsum/twomonthago_carsum)*100)).toFixed(2));
 
 
 
@@ -378,9 +378,9 @@ var twomonthago_total_carsum = 0;
       monthly_records4put["records"][0]["record"]["先月問い合わせ数"]["value"]     = twomonthago_total_leadsum;
       monthly_records4put["records"][0]["record"]["今月成約数合計"]["value"]     　= lastmonth_total_carsum;
       monthly_records4put["records"][0]["record"]["先月成約数合計"]["value"]     　= twomonthago_total_carsum;
-      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = (lastmonth_total_carsum/lastmonth_total_leadsum)*100;
-      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (lastmonth_total_carsum/twomonthago_total_carsum)*100;}
-    else{
+      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = Number((((lastmonth_total_carsum/lastmonth_total_leadsum)*100)).toFixed(2));
+      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = Number((((lastmonth_total_carsum/twomonthago_total_carsum)*100)).toFixed(2));
+    }else{
       monthly_records4post["records"][0]["今月問い合わせ数"]["value"] = lastmonth_total_leadsum;
       monthly_records4post["records"][0]["先月問い合わせ数"]["value"] = twomonthago_total_leadsum;
       monthly_records4post["records"][0]["今月成約数合計"]["value"] 　= lastmonth_total_carsum;
@@ -487,12 +487,12 @@ var twomonthago_total_carsum = 0;
       monthly_record4post["先月成約数合計"]["value"] = last_carsum;
 
       //成約率対問い合わせ数
-      monthly_record4post["成約率対問い合わせ数"]["value"] = (this_carsum/this_leadsum)*100;
-      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = (this_carsum/this_leadsum)*100;
+      monthly_record4post["成約率対問い合わせ数"]["value"] = Number((((this_carsum/this_leadsum)*100)).toFixed(2));
+      monthly_record4put["record"]["成約率対問い合わせ数"]["value"] = Number((((this_carsum/this_leadsum)*100)).toFixed(2));
 
       //成約数前月比
-      monthly_record4post["成約数前月比"]["value"] = (this_carsum/last_carsum)*100;
-      monthly_record4put["record"]["成約数前月比"]["value"] = (this_carsum/last_carsum)*100;
+      monthly_record4post["成約数前月比"]["value"] = Number((((this_carsum/last_carsum)*100)).toFixed(2));
+      monthly_record4put["record"]["成約数前月比"]["value"] = Number((((this_carsum/last_carsum)*100)).toFixed(2));
 
       //この店舗の月間レコードは無いと仮定。
       var boolIsAlreadyExist = false;
@@ -531,9 +531,9 @@ var twomonthago_total_carsum = 0;
       monthly_records4put["records"][0]["record"]["先月問い合わせ数"]["value"]     = lastmonth_total_leadsum;
       monthly_records4put["records"][0]["record"]["今月成約数合計"]["value"]     　= thismonth_total_carsum;
       monthly_records4put["records"][0]["record"]["先月成約数合計"]["value"]     　= lastmonth_total_carsum;
-      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = (thismonth_total_carsum/thismonth_total_leadsum)*100;
-      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = (thismonth_total_carsum/lastmonth_total_carsum)*100;}
-    else{
+      monthly_records4put["records"][0]["record"]["成約率対問い合わせ数"]["value"] = Number((((thismonth_total_carsum/thismonth_total_leadsum)*100)).toFixed(2));
+      monthly_records4put["records"][0]["record"]["成約数前月比"]["value"]        = Number((((thismonth_total_carsum/lastmonth_total_carsum)*100)).toFixed(2));
+    }else{
       monthly_records4post["records"][0]["今月問い合わせ数"]["value"] = thismonth_total_leadsum;
       monthly_records4post["records"][0]["先月問い合わせ数"]["value"] = lastmonth_total_leadsum;
       monthly_records4post["records"][0]["今月成約数合計"]["value"] 　= thismonth_total_carsum;
