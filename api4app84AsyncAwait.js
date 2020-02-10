@@ -66,6 +66,8 @@ function Reset_monthly_record4put(monthly_record4put){
     monthly_record4put["record"]["当月着地予想"]["value"]         = 0;
     monthly_record4put["record"]["目標成約台数"]["value"]         = 0;
     monthly_record4put["record"]["ローン付帯値"]["value"]         = 0;
+
+    return monthly_record4put;
 }
 function Reset_monthly_record4post(monthly_record4post){
     monthly_record4post["西暦"]["value"]       = 0;
@@ -81,6 +83,8 @@ function Reset_monthly_record4post(monthly_record4post){
     monthly_record4post["当月着地予想"]["value"]         = 0;
     monthly_record4post["目標成約台数"]["value"]         = 0;
     monthly_record4post["ローン付帯値"]["value"]         = 0;
+
+    return monthly_record4post;
 }
 var thismonth_total_leadsum = 0;
 var lastmonth_total_leadsum = 0;
