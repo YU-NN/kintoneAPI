@@ -23,6 +23,7 @@ var new_records_body = {
 
     var handler = function(event) {
       //全店舗のIDと店舗名を取得するJSON
+      
       var store_body = {
           "app": 57,
           "fields": ["id","name"]

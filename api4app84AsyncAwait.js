@@ -3,6 +3,7 @@ var now   = new Date();
 var year  = now.getFullYear();
 var month = now.getMonth()+1;
 
+
 //2ヶ月前の日報レコードを取得するためのクエリを作成。
 var month1ago = (month<=1)? month+11:month-1;
 var month2ago = (month<=2)? month+10:month-2;
@@ -94,12 +95,35 @@ var thismonth_total_carsum = 0;
 var lastmonth_total_carsum = 0;
 var twomonthago_total_carsum = 0;
 
+document.cookie = "now="+String(now.getTime());
+var cookies = document.cookie;
+var cookiesArray = cookies.split('; ');
+var now_ms;
+var latest_reload_ms;
 
+var boolislatest_reload = false;
+for (var i = 0; i < cookiesArray.length; i++) {
+  var cArray = cookiesArray[i].split("=");
+  if(cArray[0]=="now"){
+    now_ms = Number(cArray[1]);
+  }else if(cArray[0]=="latest_reload"){
+    boolislatest_reload = true;
+    latest_reload_ms = Number(cArray[1]);
+  }
+}
+if(boolislatest_reload=false) document.cookie = "latest_reload=0";
 
 (function() {
   'use strict';
 
   var handler = async function(event) {
+
+    swal({
+           title: '更新中です。',
+           text: 'しばらくお待ち下さい。',
+           icon: 'info',
+           button: 'OK'
+    });
     var monthly_record4put   = {
       "id": 0,
       "record": {
@@ -540,8 +564,8 @@ var twomonthago_total_carsum = 0;
       monthly_records4post["records"][0]["先月成約数合計"]["value"] 　= lastmonth_total_carsum;
     }
 
-    alert(JSON.stringify(monthly_records4post));
-    alert(JSON.stringify(monthly_records4put));
+    //alert(JSON.stringify(monthly_records4post));
+    //alert(JSON.stringify(monthly_records4put));
 
     await kintone.api(kintone.api.url('/k/v1/records', true), 'PUT' , monthly_records4put );
     await kintone.api(kintone.api.url('/k/v1/records', true), 'POST', monthly_records4post);
@@ -550,8 +574,23 @@ var twomonthago_total_carsum = 0;
 
 
 
+    swal({
+           title: '月間レコードを更新しました。',
+           text: '画面をリロードします。',
+           icon: 'success',
+           button: 'OK'
+    }).then(function() {
+           // ダイアログクローズ後の処理
+           document.cookie = "latest_reload="+String(now.getTime());
+           location.reload(true);
+    });
+
+
+
     return event;
   };
+  if ((now_ms - latest_reload_ms)/1000 > 60) {
+    kintone.events.on('app.record.index.show', handler);
+  }
 
-  kintone.events.on('app.record.index.show', handler);
 })();
