@@ -98,8 +98,84 @@ var twomonthago_total_carsum = 0;
 
 (function() {
   'use strict';
-  var handler = async function(event) {
 
+  var handler = async function(event) {
+    var monthly_record4put   = {
+      "id": 0,
+      "record": {
+        "今月問い合わせ数": {
+          "value": 0
+        },
+        "先月問い合わせ数": {
+          "value": 0
+        },
+        "今月成約数合計": {
+          "value": 0
+        },
+        "先月成約数合計": {
+          "value": 0
+        },
+        "成約率対問い合わせ数": {
+          "value": 0
+        },
+        "成約数前月比": {
+          "value": 0
+        },
+        "仮契約合計": {
+          "value": 0
+        },
+        "当月着地予想": {
+          "value": 0
+        },
+        "目標成約台数": {
+          "value": 0
+        },
+        "ローン付帯値": {
+          "value": 0
+        },
+      }
+    };
+    var monthly_record4post  = {
+      "西暦": {
+        "value": 0
+      },
+      "月": {
+        "value": 0
+      },
+      "店舗名":{
+        "value": ""
+      },
+      "今月問い合わせ数": {
+        "value": 0
+      },
+      "先月問い合わせ数": {
+        "value": 0
+      },
+      "今月成約数合計": {
+        "value": 0
+      },
+      "先月成約数合計": {
+        "value": 0
+      },
+      "成約率対問い合わせ数": {
+        "value": 0
+      },
+      "成約数前月比": {
+        "value": 0
+      },
+      "仮契約合計": {
+        "value": 0
+      },
+      "当月着地予想": {
+        "value": 0
+      },
+      "目標成約台数": {
+        "value": 0
+      },
+      "ローン付帯値": {
+        "value": 0
+      },
+    };
     //店舗情報と、月間報告レコードを取得
     var store_resp           = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', store_body);
     var monthly_records_resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', monthly_records_body);
@@ -237,82 +313,13 @@ var twomonthago_total_carsum = 0;
       twomonthago_total_leadsum += twomonthago_leadsum;
       twomonthago_total_carsum  += twomonthago_carsum;
 
-      var monthly_record4put   = {
-        "id": 0,
-        "record": {
-          "今月問い合わせ数": {
-            "value": 0
-          },
-          "先月問い合わせ数": {
-            "value": 0
-          },
-          "今月成約数合計": {
-            "value": 0
-          },
-          "先月成約数合計": {
-            "value": 0
-          },
-          "成約率対問い合わせ数": {
-            "value": 0
-          },
-          "成約数前月比": {
-            "value": 0
-          },
-          "仮契約合計": {
-            "value": 0
-          },
-          "当月着地予想": {
-            "value": 0
-          },
-          "目標成約台数": {
-            "value": 0
-          },
-          "ローン付帯値": {
-            "value": 0
-          },
-        }
-      };
-      var monthly_record4post  = {
-        "西暦": {
-          "value": year1ago
-        },
-        "月": {
-          "value": month1ago
-        },
-        "店舗名":{
-          "value": ""
-        },
-        "今月問い合わせ数": {
-          "value": 0
-        },
-        "先月問い合わせ数": {
-          "value": 0
-        },
-        "今月成約数合計": {
-          "value": 0
-        },
-        "先月成約数合計": {
-          "value": 0
-        },
-        "成約率対問い合わせ数": {
-          "value": 0
-        },
-        "成約数前月比": {
-          "value": 0
-        },
-        "仮契約合計": {
-          "value": 0
-        },
-        "当月着地予想": {
-          "value": 0
-        },
-        "目標成約台数": {
-          "value": 0
-        },
-        "ローン付帯値": {
-          "value": 0
-        },
-      };
+
+      Reset_monthly_record4put(monthly_record4put);
+      Reset_monthly_record4post(monthly_record4post);
+      monthly_record4post["西暦"]["value"]       = year1ago;
+      monthly_record4post["月"]["value"]         = month1ago;
+
+
 
       //先月用のこの店舗の問い合わせ数
       monthly_record4put["record"]["今月問い合わせ数"]["value"] = last_leadsum;
@@ -348,11 +355,15 @@ var twomonthago_total_carsum = 0;
 
       //すでにあったら、更新。そうでなければ作成
       if (boolIsAlreadyExist) {
-        monthly_records4put["records"].push(monthly_record4put);
+        var tmp_monthly_record4put = JSON.stringify(monthly_record4put);
+        tmp_monthly_record4put = JSON.parse(tmp_monthly_record4put);
+        monthly_records4put["records"].push(tmp_monthly_record4put);
       }else {
         //monthly_record4putとmonthly_record4postをiの店に合うように変更。
         monthly_record4post["店舗名"]["value"] = store_records[i]["name"]["value"];
-        monthly_records4post["records"].push(monthly_record4post);
+        var tmp_monthly_record4post = JSON.stringify(monthly_record4post);
+        tmp_monthly_record4post = JSON.parse(tmp_monthly_record4post);
+        monthly_records4post["records"].push(tmp_monthly_record4post);
       }
 
     }
@@ -521,82 +532,13 @@ var twomonthago_total_carsum = 0;
       lastmonth_total_carsum  += last_carsum;
 
 
-      var monthly_record4put   = {
-        "id": 0,
-        "record": {
-          "今月問い合わせ数": {
-            "value": 0
-          },
-          "先月問い合わせ数": {
-            "value": 0
-          },
-          "今月成約数合計": {
-            "value": 0
-          },
-          "先月成約数合計": {
-            "value": 0
-          },
-          "成約率対問い合わせ数": {
-            "value": 0
-          },
-          "成約数前月比": {
-            "value": 0
-          },
-          "仮契約合計": {
-            "value": 0
-          },
-          "当月着地予想": {
-            "value": 0
-          },
-          "目標成約台数": {
-            "value": 0
-          },
-          "ローン付帯値": {
-            "value": 0
-          },
-        }
-      };
-      var monthly_record4post  = {
-        "西暦": {
-          "value": year
-        },
-        "月": {
-          "value": month
-        },
-        "店舗名":{
-          "value": ""
-        },
-        "今月問い合わせ数": {
-          "value": 0
-        },
-        "先月問い合わせ数": {
-          "value": 0
-        },
-        "今月成約数合計": {
-          "value": 0
-        },
-        "先月成約数合計": {
-          "value": 0
-        },
-        "成約率対問い合わせ数": {
-          "value": 0
-        },
-        "成約数前月比": {
-          "value": 0
-        },
-        "仮契約合計": {
-          "value": 0
-        },
-        "当月着地予想": {
-          "value": 0
-        },
-        "目標成約台数": {
-          "value": 0
-        },
-        "ローン付帯値": {
-          "value": 0
-        },
-      };
+
+      Reset_monthly_record4put(monthly_record4put);
+      Reset_monthly_record4post(monthly_record4post);
+      monthly_record4post["西暦"]["value"]       = year;
+      monthly_record4post["月"]["value"]         = month;
+
+
 
       //問い合わせ数
       monthly_record4put["record"]["今月問い合わせ数"]["value"] = this_leadsum;
@@ -630,14 +572,19 @@ var twomonthago_total_carsum = 0;
       }
 
 
+      
+
       //すでにあったら、更新。そうでなければ作成
       if (boolIsAlreadyExist) {
-        monthly_records4put["records"].push(monthly_record4put);
+        var tmp_monthly_record4put = JSON.stringify(monthly_record4put);
+        tmp_monthly_record4put = JSON.parse(tmp_monthly_record4put);
+        monthly_records4put["records"].push(tmp_monthly_record4put);
       }else {
         //monthly_record4putとmonthly_record4postをiの店に合うように変更。
         monthly_record4post["店舗名"]["value"] = store_records[i]["name"]["value"];
-
-        monthly_records4post["records"].push(monthly_record4post);
+        var tmp_monthly_record4post = JSON.stringify(monthly_record4post);
+        tmp_monthly_record4post = JSON.parse(tmp_monthly_record4post);
+        monthly_records4post["records"].push(tmp_monthly_record4post);
       }
 
 
