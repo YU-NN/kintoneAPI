@@ -116,7 +116,7 @@ if(boolislatest_reload=false) document.cookie = "latest_reload=0";
 (function() {
   'use strict';
 
-  var handler = async function(event) {
+  async function handler(event) {
 
     swal({
            title: '更新中です。',
@@ -589,8 +589,25 @@ if(boolislatest_reload=false) document.cookie = "latest_reload=0";
 
     return event;
   };
-  if ((now_ms - latest_reload_ms)/1000 > 60) {
-    kintone.events.on('app.record.index.show', handler);
-  }
+
+
+  kintone.events.on('app.record.index.show', function(event) {
+      if (document.getElementById('reload_button') !== null) {
+          return;
+      }
+      var tmp_event = event;
+
+      var myIndexButton = document.createElement('button');
+      myIndexButton.id = 'reload_button';
+      myIndexButton.innerText = 'リロード';
+
+
+      // ボタンクリック時の処理
+      myIndexButton.onclick = function() {
+        handler(tmp_event);
+      };
+
+      kintone.app.getHeaderMenuSpaceElement().appendChild(myIndexButton);
+  });
 
 })();
